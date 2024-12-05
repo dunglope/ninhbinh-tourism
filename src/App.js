@@ -3,6 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import borderData from './ninhbinh-border.json'; // Dữ liệu GeoJSON cho ranh giới Ninh Bình
+import { useRef } from 'react';
+import './styles.css';
 
 // Thiết lập icon tùy chỉnh cho Marker
 const customMarkerIcon = new L.Icon({
@@ -16,7 +18,7 @@ const customMarkerIcon = new L.Icon({
 
 // Danh sách các điểm du lịch
 const pointsOfInterest = [
-  { id: 1, name: 'Tam Cốc Bích Động', position: [20.2163426, 105.9374570], description: 'Thông tin chi tiết cho Tam Cốc Bích Động' },
+  { id: 1, name: 'Tam Cốc Bích Động', position: [20.2163426, 105.9374570], description: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."' },
   { id: 2, name: 'Vườn Quốc gia Cúc Phương', position: [20.31726, 105.62084], description: 'Thông tin chi tiết cho Vườn Quốc gia Cúc Phương' },
   { id: 3, name: 'Khu du lịch sinh thái Tràng An', position: [20.2530403, 105.9181796], description: 'Thông tin chi tiết cho Khu du lịch sinh thái Tràng An' },
   { id: 4, name: 'Chùa Bái Đính', position: [20.272705, 105.864065], description: 'Thông tin chi tiết cho Chùa Bái Đính' },
@@ -25,97 +27,120 @@ const pointsOfInterest = [
   { id: 7, name: 'Núi Non Nước', position: [20.259298333090253, 105.98167432066744], description: 'Thông tin chi tiết cho Núi Non Nước' },
 ];
 
+const LocationMarker = ({ position, name, description, setSelectedPoint, setIsDetailsPanelOpen }) => {
+  return (
+    <Marker position={position} icon={customMarkerIcon} eventHandlers={{
+      click: () => {
+        setSelectedPoint({ name, description, position });
+        setIsDetailsPanelOpen(true); // Open panel
+      }
+    }}>
+      <Popup>{name}</Popup>
+    </Marker>
+  );
+}
+
 function NinhBinhTourismMap() {
   const [selectedPoint, setSelectedPoint] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredPoints, setFilteredPoints] = useState(pointsOfInterest);
+  const [isDetailsPanelOpen, setIsDetailsPanelOpen] = useState(false);
 
   const mapViewBounds = [
     [19.8378, 105.4921],  // Góc Tây Nam
     [20.5389, 106.3065]   // Góc Đông Bắc
   ];
 
+  const handleSearch = (query) => {
+    const filtered = pointsOfInterest.filter((point) => point.name.toLowerCase().includes(query.toLowerCase()));
+    setFilteredPoints(filtered);
+  };
+
+  const handleOutsideClick = () => {
+    setSelectedPoint(null);
+  };
+
+  const mapRef = useRef(null);
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '10px', height: '600px' }}>
-      {/* Danh sách địa điểm du lịch */}
-      <div style={{ padding: '10px', border: '1px solid #ccc', overflowY: 'auto' }}>
-        <h3>Danh sách địa điểm</h3>
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
-          {pointsOfInterest.map(point => (
-            <li
-              key={point.id}
-              style={{
-                padding: '10px',
-                marginBottom: '5px',
-                backgroundColor: selectedPoint?.id === point.id ? '#f0f0f0' : '#fff',
-                border: '1px solid #ddd',
-                cursor: 'pointer',
-                borderRadius: '5px',
-              }}
-              onClick={() => setSelectedPoint(point)}
-            >
-              {point.name}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Bản đồ OpenStreetMap */}
-      <div>
-        <MapContainer
-          center={[20.2506, 105.7915]}
-          zoom={11}
-          minZoom={11}
-          maxZoom={16}
-          zoomControl={false}
-          style={{ height: '100%', width: '100%' }}
-          maxBounds={mapViewBounds}
-          maxBoundsViscosity={1}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <GeoJSON data={borderData} style={{ color: 'black', weight: 2, fillOpacity: 0.08, fillColor: 'cyan' }} />
-          {pointsOfInterest.map(point => (
-            <Marker
-              key={point.id}
-              position={point.position}
-              icon={customMarkerIcon}
-              eventHandlers={{
-                click: () => setSelectedPoint(point),
-              }}
-            >
-              <Popup>{point.name}</Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
-
-      {/* Chi tiết địa điểm và Google Maps nhúng */}
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flex: 1 }}>
-          <iframe
-            width="100%"
-            height="250px"
-            title="Google Map"
-            loading="lazy"
-            allowFullScreen={true}
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d75958.41670957246!2d105.97545154999999!3d20.24511945!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313670ab6f10c8c1%3A0x888a79884edbe5cc!2zVHAuIE5pbmggQsOsbmgsIE5pbmggQsOsbmg!5e1!3m2!1svi!2s!4v1730893232542!5m2!1svi!2s"
-            style={{ border: '2px solid #ccc', borderRadius: '5px' }}
-          />
+    <div>
+      <nav className="navbar">
+        <div className='header'>
+        <h1>Ninh Binh Tourism</h1>
         </div>
-        <div style={{ flex: 1, padding: '10px', border: '1px solid #ccc', overflowY: 'auto' }}>
-          {selectedPoint ? (
-            <div>
-              <h3>{selectedPoint.name}</h3>
-              <p>{selectedPoint.description}</p>
-            </div>
-          ) : (
-            <p>Nhấn vào điểm du lịch để xem chi tiết</p>
+        <div className="navbar-right">
+          <i class="fas fa-search" ></i>
+          <button>
+            <input type="text" class="input-search" placeholder="Tìm kiếm..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); handleSearch(e.target.value); }}></input>
+          </button>
+        </div>
+      </nav>
+      <div style={{ display: 'flex', height: 'calc(100vh - 50px)' }}>
+        <div className="sidebar">
+          <h3 style={{ textAlign: 'center' }}>Danh sách địa điểm</h3>
+          <ol className="olcards">
+            {filteredPoints.map((point) => (
+              <li key={point.id} style={{ "--cardColor": "#36aeb3" }} onClick={() => setSelectedPoint(point)}>
+                <div className="content">
+                  <div className="icon">🗺️</div>
+                  <div className="title">{point.name}</div>
+                </div>
+                onClick={() => setSelectedPoint(point)}
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div className="map-container">
+          <MapContainer
+            ref={mapRef}
+            center={[20.2506, 105.7915]}
+            zoom={11}
+            minZoom={11}
+            maxZoom={16}
+            zoomControl={false}
+            style={{ height: '100%', width: '100%' }}
+            maxBounds={mapViewBounds}
+            maxBoundsViscosity={1}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            <GeoJSON data={borderData} style={{ color: 'black', weight: 2, fillOpacity: 0.08, fillColor: 'cyan' }} />
+            {filteredPoints.map((point) => (
+              <LocationMarker
+                key={point.id}
+                position={point.position}
+                name={point.name}
+                description={point.description}
+                setSelectedPoint={setSelectedPoint}
+                onClick={() => {
+                  mapRef.current.leafletElement.setView(point.position, 15);
+                }}
+                setIsDetailsPanelOpen={setIsDetailsPanelOpen}
+
+              />
+            ))}
+          </MapContainer>
+        </div>
+        <div className={`details-panel ${isDetailsPanelOpen ? 'open' : ''}`}> {/* Conditional class */}
+            {selectedPoint && (
+              <>
+                <button className="close-button" onClick={() => {
+                    setSelectedPoint(null);
+                    setIsDetailsPanelOpen(false); // Close panel
+                  }}>
+                  ×
+                </button>
+                <h4>{selectedPoint.name}</h4>
+                <p>{selectedPoint.description}</p>
+              {/* Add more detailed information here (images, etc.) */}
+            </>
           )}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default NinhBinhTourismMap;
