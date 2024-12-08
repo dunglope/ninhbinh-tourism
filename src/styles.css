@@ -1,7 +1,7 @@
 /* src/styles.css */
 
 body {
-  font-family: 'Alexandria', serif; 
+  font-family: 'Alexandria', serif;
   margin: 0;
   padding: 0;
   background-color: #f0f0f0;
@@ -54,8 +54,10 @@ body {
   z-index: 1;
   position: relative;
   display: flex;
+  cursor: grab;
 }
 
+/* CSS for the details panel */
 .details-panel {
   position: absolute;
   top: 200px; /* Adjust as needed */
@@ -96,18 +98,28 @@ body {
   font-weight: bold;
 }
 
+.details-panel img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 5px; /* Optional: Add rounded corners */
+}
+
+/* CSS for the nav bar and search bar */
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px;
-  background-color: #333;
+background-color: #333;
   color: #fff;
 }
 
 .navbar-right {
   margin-left: auto;
 }
+
+/* CSS for the search box */
 
 .navbar-right input {
   width: 200px;
@@ -136,7 +148,6 @@ body {
   outline: none;
   border-radius: 25px;
   transition: all .5s ease-in-out;
-  background-color: #22a6b3;
   padding-right: 40px;
   color: #000000;
 }
@@ -280,3 +291,5 @@ body {
 .olcards li .content .text {
   grid-area: text;
 }
+
+/* anything down there is experimental */
