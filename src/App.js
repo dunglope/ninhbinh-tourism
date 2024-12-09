@@ -157,6 +157,10 @@ function NinhBinhTourismMap() {
               <li key={point.id} style={{ "--cardColor": "#36aeb3" }} onClick={() => {
                 setSelectedPoint(point);
                 setIsDetailsPanelOpen(true); // Open panel when clicking on sidebar item
+
+                if (mapRef.current) {
+                  mapRef.current.flyTo(point.position, 15, { duration: 1.5 });
+                }
               }}>
                 <div className="content">
                   <div className="icon">🗺️</div>
@@ -192,9 +196,6 @@ function NinhBinhTourismMap() {
                 name={point.name}
                 description={point.description}
                 setSelectedPoint={setSelectedPoint}
-                onClick={() => {
-                  mapRef.current.leafletElement.setView(point.position, 15);
-                }}
                 setIsDetailsPanelOpen={setIsDetailsPanelOpen}
 
               />
