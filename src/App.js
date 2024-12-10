@@ -125,6 +125,8 @@ function NinhBinhTourismMap() {
     [20.5389, 106.3065]   // Góc Đông Bắc
   ];
 
+  const centerCoordinate = [20.20498, 105.92803];
+
   const handleSearch = (query) => {
     const filtered = pointsOfInterest.filter((point) => point.name.toLowerCase().includes(query.toLowerCase()));
     setFilteredPoints(filtered);
@@ -179,7 +181,7 @@ function NinhBinhTourismMap() {
             minZoom={11}
             maxZoom={16}
             zoomControl={false}
-            style={{ height: '100%', width: '100%' }}
+            style={{ height: '97%', width: '100%' }}
             maxBounds={mapViewBounds}
             maxBoundsViscosity={1}
           >
@@ -210,6 +212,7 @@ function NinhBinhTourismMap() {
                 <button className="close-button" onClick={() => {
                     setSelectedPoint(null);
                     setIsDetailsPanelOpen(false); // Close panel
+                    mapRef.current.flyTo(centerCoordinate, 11, { duration: 1.5 });
                   }}>
                   ×
                 </button>
