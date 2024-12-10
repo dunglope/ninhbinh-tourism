@@ -30,8 +30,8 @@ body {
   height: 97%;
   padding: 10px;
   border-right: 1px solid #ccc;
-  /* overflow-y: auto; */
-  background-color: #fff; /* Add background for better contrast */
+  overflow-y: scroll;
+  background-color: #fff;
 }
 
 .sidebar ul {
