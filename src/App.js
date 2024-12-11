@@ -57,7 +57,7 @@ const pointsOfInterest = [
     position: [20.285868, 105.906647], 
     address: 'xã Trường Yên, huyện Hoa Lư, Ninh Bình',
     image: process.env.PUBLIC_URL + '/image/vua dinh.jpg',
-    description: 'Thông tin chi tiết cho Đền vua Đinh và vua Lê' 
+    description: 'Đền thờ Đinh Tiên Hoàng là một di tích quan trọng thuộc vùng bảo vệ đặc biệt của quần thể di sản cố đô Hoa Lư. Đền toạ lạc ở xã Trường Yên, thành phố Hoa Lư tỉnh Ninh Bình, Việt Nam. Vị trí của đền thuộc trung tâm thành Đông của kinh đô Hoa Lư xưa. Đây là nơi duy nhất ở Việt Nam thờ đồng thời Vua Đinh Tiên Hoàng, cha mẹ ông cùng các con trai và có bài vị thờ các tướng triều Đinh. Đền Vua Đinh cùng với đền Vua Lê được xếp hạng Top 100 công trình 100 tuổi nổi tiếng ở Việt Nam. Cũng như các di tích khác thuộc cố đô Hoa Lư, đền Vua Đinh nằm trong quần thể di sản thế giới Tràng An đã được UNESCO công nhận năm 2014.' 
   },
   { 
     id: 6, 
@@ -153,7 +153,7 @@ function NinhBinhTourismMap() {
       </nav>
       <div style={{ display: 'flex', height: 'calc(100vh - 50px)' }}>
         <div className="sidebar">
-          <h3 style={{ textAlign: 'center' }}>Danh sách địa điểm</h3>
+          <h3 style={{ textAlign: 'center', fontSize: '20px' }}>Danh sách địa điểm</h3>
           <ol className="olcards">
             {filteredPoints.map((point) => (
               <li key={point.id} style={{ "--cardColor": "#36aeb3" }} onClick={() => {
