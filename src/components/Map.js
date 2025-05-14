@@ -67,7 +67,7 @@ const options = {
 
 function App() {
     return (
-        <LoadScript googleMapsApiKey="AIzaSyBXL7x_ILYLoA4Jml9Q5aAJkgyqLgW4qY0">
+        <LoadScript googleMapsApiKey="YOUR_API_KEY">
             <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 center={center}
